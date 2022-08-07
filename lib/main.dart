@@ -25,6 +25,10 @@ class _LoadingPageState extends State<LoadingPage> {
     // TODO: implement initState
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      // http.Request('Hi',Uri.parse('https://www.googleapis.com/auth/cloud-firestore'));
+      // final resp = await http.patch(Uri.parse('https://firestore.googleapis.com/v1/projects/notesappbyraj/databases/Notes'),body: jsonEncode({"name": "aaaaaaaaaaaaaaaaaaa"}));
+      // Map m = jsonDecode(resp.body);
+      // print(m);
       await Future.delayed(const Duration(seconds: 3));
       Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => LoginPage()));
     });

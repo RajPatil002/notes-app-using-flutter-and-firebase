@@ -6,20 +6,21 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: StreamBuilder(
-        stream: FirebaseFirestore.instance.collection('Notes').snapshots(),
-        builder: (context,notes){
-          return GridView.builder(gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2
-          ),
-            // itemCount: notes.data!.length,
-            itemBuilder: (BuildContext context, int index) {
-              return Card();
-            },
-          );
-        },
-      ),
-    );
+    // return Scaffold(
+    //   body: StreamBuilder(
+    //     stream: FirebaseFirestore.instance.collection('Notes').snapshots(),
+    //     builder: (context,notes){
+    //       return GridView.builder(gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+    //         crossAxisCount: 2
+    //       ),
+    //         // itemCount: notes.data!.length,
+    //         itemBuilder: (BuildContext context, int index) {
+    //           return Card();
+    //         },
+    //       );
+    //     },
+    //   ),
+    // );
+    return Text("Hi Homaepage");
   }
 }
