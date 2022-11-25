@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:notesapp/otppage.dart';
 
 class LoginPage extends StatelessWidget {
+  TextEditingController phone = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -13,7 +15,10 @@ class LoginPage extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(20.0),
               child: TextFormField(
-                decoration: const InputDecoration(border: OutlineInputBorder()),
+                controller: phone,
+                decoration: const InputDecoration(border: OutlineInputBorder(),
+                  hintText: ("+91")
+                ),
               ),
             ),
             Align(
@@ -23,7 +28,7 @@ class LoginPage extends StatelessWidget {
                 child: FloatingActionButton(
                   onPressed: () {
                     FirebaseAuth.instance.verifyPhoneNumber(
-                      phoneNumber: '+917620218606',
+                      phoneNumber: '+91${phone.text}',
                       verificationFailed: (FirebaseAuthException error) {
                         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Incorrect number.")));
                       },

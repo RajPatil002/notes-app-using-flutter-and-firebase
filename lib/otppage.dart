@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:notesapp/homepage.dart';
 
 class OTPPage extends StatefulWidget {
   final String verifyID;
@@ -204,6 +205,8 @@ class _OTPPageState extends State<OTPPage> {
                      ));
                      User? u = result.user;
                      print("${u?.uid} ${u?.phoneNumber}");
+
+                     Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => HomePage(uid: u?.uid,)));
                   } on FirebaseAuthException {
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Invalid OTP')));
                   }
