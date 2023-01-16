@@ -16,7 +16,7 @@ class _LoadingPageState extends State<LoadingPage> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await Future.delayed(const Duration(seconds: 3));
-      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const HomePage(uid: "3bAm8UUxT2fFbCwKSnJ7QuPKN013")));
+      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => LoginPage()));
     });
   }
 
@@ -53,7 +53,7 @@ class _LoadingPageState extends State<LoadingPage> {
                       ),
                       const Padding(
                         padding:  EdgeInsets.only(top: 10),
-                        child: Text('Welcome to Notes',style: TextStyle(color: Colors.white,fontSize: 20),),
+                        child: Text('Welcome to Notes',style: TextStyle(color: Colors.white,fontSize: 25),),
                       )
                     ],
                   ),

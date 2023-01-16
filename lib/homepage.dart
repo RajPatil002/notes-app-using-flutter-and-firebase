@@ -1,12 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:notesapp/backgroundtheme.dart';
+import 'package:notesapp/editorpage.dart';
+import 'package:notesapp/firebase_options.dart';
 
 
-// main() => runApp(
-//     MaterialApp(home: HomePage())
-// );
+main() async {
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform
+  );
+  runApp(
+    MaterialApp(home: HomePage(uid: "3bAm8UUxT2fFbCwKSnJ7QuPKN013", ))
+  );
+}
 
 class HomePage extends StatelessWidget {
   final String? uid;
@@ -52,6 +60,8 @@ class HomePage extends StatelessWidget {
                               child: InkWell(
                                 onTap: (){
                                   // todo
+                                  print(notes.data!.docs[index].id.length);
+                                  Navigator.of(context).push(MaterialPageRoute(builder: (_) => EditorPage(uid: "$uid", date: notes.data!.docs[index].id.toString())));
                                 },
                                 child: Card(
                                   shape: RoundedRectangleBorder(
@@ -74,8 +84,9 @@ class HomePage extends StatelessWidget {
                                             Expanded(
                                               flex: 1,
                                               child: FloatingActionButton(onPressed: (){
-                                              //  todo
-                                              },
+                                                //  todo
+                                                },
+                                                heroTag: "f1",
                                                 elevation: 20,
                                                 backgroundColor: Colors.red,
                                                 child: const Icon(Icons.delete_forever),
@@ -98,8 +109,9 @@ class HomePage extends StatelessWidget {
                                               flex: 2,
                                               child: FloatingActionButton(onPressed: (){
                                                 // TODO
-                                              },
+                                                },
                                                 child: const Icon(Icons.edit),
+                                                heroTag: "f2",
                                               ),
                                             )
                                           ],
