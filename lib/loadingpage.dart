@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 import 'package:notesapp/homepage.dart';
 import 'package:notesapp/loginpage.dart';
+import 'package:notesapp/redux/actions.dart';
+import 'package:notesapp/redux/appstate.dart';
+import 'package:notesapp/wrapper.dart';
 
 
 class LoadingPage extends StatefulWidget {
@@ -15,8 +19,16 @@ class _LoadingPageState extends State<LoadingPage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      String uid = await Wrapper.isLogged();
+      print(uid);
       await Future.delayed(const Duration(seconds: 3));
-      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => LoginPage()));
+      if(uid.isNotEmpty){
+        StoreProvider.of<AppState>(context).dispatch(UpdateUid(uid));
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => HomePage()));
+      }else{
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => LoginPage()));
+      }
+
     });
   }
 
@@ -24,6 +36,7 @@ class _LoadingPageState extends State<LoadingPage> {
   Widget build(BuildContext context) {
     final screensize = MediaQuery.of(context).size;
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Center(
         child: Stack(
           children: [

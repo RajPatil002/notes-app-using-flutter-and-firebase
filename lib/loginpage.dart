@@ -11,6 +11,7 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Stack(
           alignment: Alignment.center,
@@ -41,7 +42,7 @@ class LoginPage extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text("Mobile Number",style: TextStyle(fontSize: 30,color: Colors.white),),
+                  const Text("Mobile Number",style: TextStyle(fontSize: 30,color: Colors.white,fontWeight: FontWeight.bold,),),
                   Padding(
                     padding: const EdgeInsets.all(20.0),
                     child: Form(
@@ -53,6 +54,7 @@ class LoginPage extends StatelessWidget {
                             return "Enter mobile number.";
                           }
                         },
+                        keyboardType: TextInputType.number,
                         autofocus: true,
                         controller: phone,
                         decoration: InputDecoration(
@@ -75,7 +77,7 @@ class LoginPage extends StatelessWidget {
                   ),
                   FloatingActionButton.extended(
                     backgroundColor: Colors.white,
-                    icon: const Icon(Icons.verified,color: Colors.black),
+                    icon: const Icon(Icons.password_outlined,color: Colors.black),
                     onPressed: () {
                       if(input.currentState!.validate()){
                         FirebaseAuth.instance.verifyPhoneNumber(
@@ -84,8 +86,8 @@ class LoginPage extends StatelessWidget {
                                 : '+91${phone.text}',
                             verificationFailed: (FirebaseAuthException error) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text("Incorrect number.")));
+                                  SnackBar(
+                                      content: Text("Incorrect number.${error.message.toString()}")));
                             },
                             verificationCompleted:
                                 (PhoneAuthCredential phoneAuthCredential) {
@@ -95,17 +97,17 @@ class LoginPage extends StatelessWidget {
                                 int? forceResendingToken) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(content: Text("OTP sent.")));
-                              Navigator.of(context).push(MaterialPageRoute(
+                              Navigator.of(context).pushReplacement(MaterialPageRoute(
                                   builder: (_) => OTPPage(
                                         verifyID: verificationId,
                                       )));
                             },
                             codeAutoRetrievalTimeout:
                                 (String verificationId) {},
-                            timeout: const Duration(minutes: 3));
+                            timeout: const Duration(seconds: 10));
                       }
                     },
-                    label: const Text("Verify",style: TextStyle(color: Colors.black),),
+                    label: const Text("Get OTP",style: TextStyle(color: Colors.black),),
                     // shape: const Icon(Icons.arrow_forward),
                   ),
                 ],

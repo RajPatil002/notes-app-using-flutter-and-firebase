@@ -1,6 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 import 'package:notesapp/homepage.dart';
+import 'package:notesapp/redux/actions.dart';
+import 'package:notesapp/redux/appstate.dart';
+import 'package:notesapp/redux/reducer.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'backgroundtheme.dart';
 
@@ -30,11 +35,11 @@ class _OTPPageState extends State<OTPPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Stack(
         alignment: Alignment.center,
         children: [
           Container(
-            // todo back ground
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
             color: const Color(0xffff5858),
@@ -71,14 +76,15 @@ class _OTPPageState extends State<OTPPage> {
                               onTap: () {
                                 pin1.clear();
                               },
+                              autofocus: true,
                               cursorHeight: 0,
                               cursorWidth: 0,
                               textAlign: TextAlign.center,
                               keyboardType: TextInputType.number,
                               maxLength: 1,
-                              onChanged: (num) {
-                                if (num.isNotEmpty) {
-                                  pin1.text = num;
+                              onChanged: (value) {
+                                if (value.isNotEmpty) {
+                                  pin1.text = value;
                                   FocusScope.of(context).nextFocus();
                                 }
                               },
@@ -106,9 +112,9 @@ class _OTPPageState extends State<OTPPage> {
                               textAlign: TextAlign.center,
                               keyboardType: TextInputType.number,
                               maxLength: 1,
-                              onChanged: (num) {
-                                if (num.isNotEmpty) {
-                                  pin2.text = num;
+                              onChanged: (value) {
+                                if (value.isNotEmpty) {
+                                  pin2.text = value;
                                   FocusScope.of(context).nextFocus();
                                 }
                               },
@@ -135,10 +141,10 @@ class _OTPPageState extends State<OTPPage> {
                               textAlign: TextAlign.center,
                               keyboardType: TextInputType.number,
                               maxLength: 1,
-                              onChanged: (num) {
-                                if (num.isNotEmpty) {
+                              onChanged: (value) {
+                                if (value.isNotEmpty) {
                                   pin3.clear();
-                                  pin3.text = num;
+                                  pin3.text = value;
                                   FocusScope.of(context).nextFocus();
                                 }
                               },
@@ -165,10 +171,10 @@ class _OTPPageState extends State<OTPPage> {
                               textAlign: TextAlign.center,
                               keyboardType: TextInputType.number,
                               maxLength: 1,
-                              onChanged: (num) {
-                                if (num.isNotEmpty) {
+                              onChanged: (value) {
+                                if (value.isNotEmpty) {
                                   pin4.clear();
-                                  pin4.text = num;
+                                  pin4.text = value;
                                   FocusScope.of(context).nextFocus();
                                 }
                               },
@@ -196,10 +202,10 @@ class _OTPPageState extends State<OTPPage> {
                               textAlign: TextAlign.center,
                               keyboardType: TextInputType.number,
                               maxLength: 1,
-                              onChanged: (num) {
-                                if (num.isNotEmpty) {
+                              onChanged: (value) {
+                                if (value.isNotEmpty) {
                                   pin5.clear();
-                                  pin5.text = num;
+                                  pin5.text = value;
                                   FocusScope.of(context).nextFocus();
                                 }
                               },
@@ -227,8 +233,8 @@ class _OTPPageState extends State<OTPPage> {
                               textAlign: TextAlign.center,
                               keyboardType: TextInputType.number,
                               maxLength: 1,
-                              onChanged: (num) {
-                                if (num.isNotEmpty) {
+                              onChanged: (value) {
+                                if (value.isNotEmpty) {
                                   FocusScope.of(context).nextFocus();
                                 }
                               },
@@ -248,17 +254,18 @@ class _OTPPageState extends State<OTPPage> {
                 ),//ot
                 FloatingActionButton.extended(
                   backgroundColor: Colors.white,
-                  icon: const Icon(Icons.arrow_forward,color: Colors.black),
+                  icon: const Icon(Icons.verified,color: Colors.black),
                   onPressed: () async {
                     try{
                       UserCredential result = await FirebaseAuth.instance
                           .signInWithCredential(PhoneAuthProvider.credential(
                           verificationId: widget.verifyID, smsCode: "${pin1.text}${pin2.text}${pin3.text}${pin4.text}${pin5.text}${pin6.text}"
                       ));
-                      User? u = result.user;
-                      print("${u?.uid} ${u?.phoneNumber}");
-
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => HomePage(uid: u?.uid,)));
+                      String uid = result.user!.uid;
+                      StoreProvider.of<AppState>(context).dispatch(UpdateUid(uid));
+                      // print("${uq}");
+                      SharedPreferences.getInstance().then((value) => value.setString("uid", uid));
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => HomePage()));
                     } on FirebaseAuthException {
                       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Invalid OTP')));
                     }
