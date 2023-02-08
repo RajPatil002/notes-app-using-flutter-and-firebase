@@ -4,21 +4,13 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:notesapp/homepage.dart';
 import 'package:notesapp/redux/actions.dart';
 import 'package:notesapp/redux/appstate.dart';
-import 'package:notesapp/redux/reducer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'backgroundtheme.dart';
 
-
-class OTPPage extends StatefulWidget {
+class OTPPage extends StatelessWidget {
   final String verifyID;
-  const OTPPage({Key? key,required this.verifyID}) : super(key: key);
-
-  @override
-  State<OTPPage> createState() => _OTPPageState();
-}
-
-class _OTPPageState extends State<OTPPage> {
+  OTPPage({Key? key,required this.verifyID}) : super(key: key);
 
   TextEditingController pin1 = TextEditingController();
 
@@ -64,13 +56,26 @@ class _OTPPageState extends State<OTPPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Text("OTP",style: TextStyle(fontSize: 30,color: Colors.white),),
-                Padding(
+                //otp fields
+                Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.rectangle,
+                    color: Colors.transparent.withOpacity(0.07),
+                    borderRadius: BorderRadius.circular(10)
+                  ),
                   padding: const EdgeInsets.all(20.0),
                   child: Row(
                     children: [
                       Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 12,right: 12),
+                          child: Container(
+                            padding: const EdgeInsets.only(left: 7,right: 7),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.rectangle,
+                              border: Border.all(
+                                color: Colors.transparent,
+                                width: 1
+                              )
+                            ),
                             child: TextFormField(
                               controller: pin1,
                               onTap: () {
@@ -100,8 +105,15 @@ class _OTPPageState extends State<OTPPage> {
                           )
                       ),
                       Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 12,right: 12),
+                          child: Container(
+                            padding: const EdgeInsets.only(left: 7,right: 7),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.rectangle,
+                              border: Border.all(
+                                color: Colors.transparent,
+                                width: 1
+                              )
+                            ),
                             child: TextFormField(
                               controller: pin2,
                               onTap: () {
@@ -129,8 +141,15 @@ class _OTPPageState extends State<OTPPage> {
                             ),
                           )),
                       Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 12,right: 12),
+                          child: Container(
+                            padding: const EdgeInsets.only(left: 7,right: 7),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.rectangle,
+                              border: Border.all(
+                                color: Colors.transparent,
+                                width: 1
+                              )
+                            ),
                             child: TextFormField(
                               controller: pin3,
                               onTap: () {
@@ -159,8 +178,15 @@ class _OTPPageState extends State<OTPPage> {
                             ),
                           )),
                       Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 12,right: 12),
+                          child: Container(
+                            padding: const EdgeInsets.only(left: 7,right: 7),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.rectangle,
+                              border: Border.all(
+                                color: Colors.transparent,
+                                width: 1
+                              )
+                            ),
                             child: TextFormField(
                               controller: pin4,
                               onTap: () {
@@ -190,8 +216,15 @@ class _OTPPageState extends State<OTPPage> {
                           )
                       ),
                       Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 12,right: 12),
+                          child: Container(
+                            padding: const EdgeInsets.only(left: 7,right: 7),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.rectangle,
+                              border: Border.all(
+                                color: Colors.transparent,
+                                width: 1
+                              )
+                            ),
                             child: TextFormField(
                               controller: pin5,
                               onTap: () {
@@ -221,8 +254,15 @@ class _OTPPageState extends State<OTPPage> {
                           )
                       ),
                       Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 12,right: 12),
+                          child: Container(
+                            padding: const EdgeInsets.only(left: 7,right: 7),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.rectangle,
+                              border: Border.all(
+                                color: Colors.transparent,
+                                width: 1
+                              )
+                            ),
                             child: TextFormField(
                               controller: pin6,
                               onTap: () {
@@ -251,7 +291,9 @@ class _OTPPageState extends State<OTPPage> {
                       ),
                     ],
                   ),
-                ),//ot
+                ),
+
+                //button for login
                 FloatingActionButton.extended(
                   backgroundColor: Colors.white,
                   icon: const Icon(Icons.verified,color: Colors.black),
@@ -259,43 +301,21 @@ class _OTPPageState extends State<OTPPage> {
                     try{
                       UserCredential result = await FirebaseAuth.instance
                           .signInWithCredential(PhoneAuthProvider.credential(
-                          verificationId: widget.verifyID, smsCode: "${pin1.text}${pin2.text}${pin3.text}${pin4.text}${pin5.text}${pin6.text}"
+                          verificationId: verifyID, smsCode: "${pin1.text}${pin2.text}${pin3.text}${pin4.text}${pin5.text}${pin6.text}"
                       ));
                       String uid = result.user!.uid;
                       StoreProvider.of<AppState>(context).dispatch(UpdateUid(uid));
                       // print("${uq}");
                       SharedPreferences.getInstance().then((value) => value.setString("uid", uid));
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => HomePage()));
+                      await FirebaseAuth.instance.setSettings(appVerificationDisabledForTesting: true,forceRecaptchaFlow: true);
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const HomePage()));
                     } on FirebaseAuthException {
                       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Invalid OTP')));
                     }
                   },
-                  label: const Text("Check",style: TextStyle(color: Colors.black),),
+                  label: const Text("Verify",style: TextStyle(color: Colors.black),),
                   // shape: const Icon(Icons.arrow_forward),
-                ),// p fields
-                // Align(
-                //   alignment: AlignmentDirectional.bottomEnd,
-                //   child: Padding(
-                //     padding: const EdgeInsets.only(right: 20.0),
-                //     child: FloatingActionButton(
-                //       onPressed: () async {
-                //         try{
-                //           UserCredential result = await FirebaseAuth.instance
-                //               .signInWithCredential(PhoneAuthProvider.credential(
-                //               verificationId: widget.verifyID, smsCode: "${pin1.text}${pin2.text}${pin3.text}${pin4.text}${pin5.text}${pin6.text}"
-                //           ));
-                //           User? u = result.user;
-                //           print("${u?.uid} ${u?.phoneNumber}");
-                //
-                //           Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => HomePage(uid: u?.uid,)));
-                //         } on FirebaseAuthException {
-                //           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Invalid OTP')));
-                //         }
-                //       },
-                //       child: const Icon(Icons.arrow_forward),
-                //     ),
-                //   ),
-                // ),//button for login
+                ),
               ],
             ),
           ),

@@ -1,3 +1,6 @@
+import 'dart:html';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:notesapp/homepage.dart';
@@ -8,6 +11,8 @@ import 'package:notesapp/wrapper.dart';
 
 
 class LoadingPage extends StatefulWidget {
+  const LoadingPage({super.key});
+
   @override
   State<LoadingPage> createState() => _LoadingPageState();
 }
@@ -22,9 +27,15 @@ class _LoadingPageState extends State<LoadingPage> {
       String uid = await Wrapper.isLogged();
       print(uid);
       await Future.delayed(const Duration(seconds: 3));
+      final el = window.document.getElementById('__ff-recaptcha-container');
+      // if (el != null) {
+      //   print(el.className);
+      //   el.style.visibility = 'hidden';
+      // }
       if(uid.isNotEmpty){
         StoreProvider.of<AppState>(context).dispatch(UpdateUid(uid));
-        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => HomePage()));
+        // await FirebaseAuth.instance.setSettings(appVerificationDisabledForTesting: true,forceRecaptchaFlow: true);
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const HomePage()));
       }else{
         Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => LoginPage()));
       }

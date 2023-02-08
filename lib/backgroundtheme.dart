@@ -17,7 +17,6 @@ class BackgroundTheme extends CustomPainter{
     path.lineTo(size.width * 0.5, 0);
     path.lineTo(size.width * 0.45, size.height * 0.085);
     path.quadraticBezierTo(size.width * 0.45, size.height * 0.1, size.width * 0.5, size.height * 0.1);
-    // path.lineTo(size.width * 0.5, size.height * 0.1);
 
     path.arcToPoint(Offset(size.width * 0.5, size.height * 0.5),radius: Radius.circular(radius));
     path.arcToPoint(Offset(size.width * 0.5, size.height * 0.9),radius: Radius.circular(radius), clockwise: false);

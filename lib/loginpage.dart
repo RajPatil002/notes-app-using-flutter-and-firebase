@@ -8,6 +8,8 @@ class LoginPage extends StatelessWidget {
   TextEditingController phone = TextEditingController();
   final input = GlobalKey<FormState>();
 
+  LoginPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,10 +51,11 @@ class LoginPage extends StatelessWidget {
                       key: input,
                       child: TextFormField(
                         style: const TextStyle(letterSpacing: 4,fontFamily: "Roboto"),
-                        validator: (num){
-                          if( num == null || num.isEmpty){
+                        validator: (value){
+                          if( value == null || value.isEmpty){
                             return "Enter mobile number.";
                           }
+                          return null;
                         },
                         keyboardType: TextInputType.number,
                         autofocus: true,
@@ -85,6 +88,7 @@ class LoginPage extends StatelessWidget {
                                 ? phone.text
                                 : '+91${phone.text}',
                             verificationFailed: (FirebaseAuthException error) {
+                              print(error);
                               ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                       content: Text("Incorrect number.${error.message.toString()}")));

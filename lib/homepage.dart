@@ -1,27 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:intl/intl.dart';
 import 'package:notesapp/backgroundtheme.dart';
 import 'package:notesapp/editorpage.dart';
-import 'package:notesapp/firebase_options.dart';
 import 'package:notesapp/redux/appstate.dart';
-import 'package:notesapp/redux/reducer.dart';
-import 'package:redux/redux.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-main() async {
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(MediaQuery(
-      data: const MediaQueryData(
-        size: Size.infinite,
-      ),
-      child: HomePage()));
-}
-
 class HomePage extends StatelessWidget {
-  HomePage({Key? key}) : super(key: key);
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -120,6 +107,63 @@ class HomePage extends StatelessWidget {
                                                       color: Colors.white,
                                                       onPressed: () {
                                                         //  todo
+                                                        showDialog(
+                                                            context: context,
+                                                            builder:
+                                                                (BuildContext
+                                                                    context) {
+                                                              return AlertDialog(
+                                                                shape: RoundedRectangleBorder(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            30)),
+                                                                alignment:
+                                                                    Alignment
+                                                                        .center,
+                                                                title: const Text(
+                                                                    "Delete"),
+                                                                content:
+                                                                    Padding(
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                              .all(
+                                                                          8.0),
+                                                                  child: Column(
+                                                                    mainAxisSize:
+                                                                        MainAxisSize
+                                                                            .min,
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .start,
+                                                                    children: [
+                                                                      const Text(
+                                                                          "Do you want to delete this note?"),
+                                                                      Text(notes
+                                                                          .data
+                                                                          ?.docs[index]["Title"])
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                actions: [
+                                                                  ElevatedButton(
+                                                                      style: ButtonStyle(
+                                                                          backgroundColor: MaterialStateProperty.all(Colors
+                                                                              .deepPurpleAccent),
+                                                                          shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                                                                              borderRadius: BorderRadius.circular(
+                                                                                  50)))),
+                                                                      onPressed: () {
+                                                                        FirebaseFirestore
+                                                                            .instance
+                                                                            .doc("Users/$uid/Notes/${notes.data?.docs[index].id}")
+                                                                            .delete();
+                                                                        Navigator.of(context).pop();
+                                                                      },
+                                                                      child: const Text(
+                                                                          "Yes"))
+                                                                ],
+                                                              );
+                                                            });
                                                       },
                                                       // elevation: 20,
                                                       icon: const Icon(
@@ -202,12 +246,13 @@ class HomePage extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-          onPressed: () {
-            SharedPreferences.getInstance().then((value) => value.setString("uid", ""));
-          },
+        onPressed: () {
+          SharedPreferences.getInstance()
+              .then((value) => value.setString("uid", ""));
+        },
         backgroundColor: const Color(0xff01bff9),
-          label: const Text("Logout"),
-          icon: const Icon(Icons.logout),
+        label: const Text("Logout"),
+        icon: const Icon(Icons.logout),
       ),
     );
   }
