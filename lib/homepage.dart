@@ -152,12 +152,14 @@ class HomePage extends StatelessWidget {
                                                                           shape: MaterialStateProperty.all(RoundedRectangleBorder(
                                                                               borderRadius: BorderRadius.circular(
                                                                                   50)))),
-                                                                      onPressed: () {
+                                                                      onPressed:
+                                                                          () {
                                                                         FirebaseFirestore
                                                                             .instance
                                                                             .doc("Users/$uid/Notes/${notes.data?.docs[index].id}")
                                                                             .delete();
-                                                                        Navigator.of(context).pop();
+                                                                        Navigator.of(context)
+                                                                            .pop();
                                                                       },
                                                                       child: const Text(
                                                                           "Yes"))

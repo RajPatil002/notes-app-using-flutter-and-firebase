@@ -4,11 +4,20 @@ import 'package:notesapp/otppage.dart';
 
 import 'backgroundtheme.dart';
 
-class LoginPage extends StatelessWidget {
-  TextEditingController phone = TextEditingController();
-  final input = GlobalKey<FormState>();
+class LoginPage extends StatefulWidget {
 
   LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  TextEditingController phone = TextEditingController();
+
+  final input = GlobalKey<FormState>();
+
+  bool isclicked = false;
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +28,6 @@ class LoginPage extends StatelessWidget {
           alignment: Alignment.center,
           children: [
             Container(
-              // todo back ground
               height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
               color: const Color(0xffff5858),
@@ -80,10 +88,13 @@ class LoginPage extends StatelessWidget {
                   ),
                   FloatingActionButton.extended(
                     backgroundColor: Colors.white,
-                    icon: const Icon(Icons.password_outlined,color: Colors.black),
-                    onPressed: () {
+                    icon: isclicked?const Center(child: CircularProgressIndicator(color: Colors.cyan,)) : const Icon(Icons.password_outlined,color: Colors.black),
+                    onPressed: isclicked?() {}:() async {
                       if(input.currentState!.validate()){
-                        FirebaseAuth.instance.verifyPhoneNumber(
+                        setState((){
+                          isclicked = true;
+                        });
+                        await FirebaseAuth.instance.verifyPhoneNumber(
                             phoneNumber: phone.text.contains("+91")
                                 ? phone.text
                                 : '+91${phone.text}',
@@ -101,7 +112,7 @@ class LoginPage extends StatelessWidget {
                                 int? forceResendingToken) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(content: Text("OTP sent.")));
-                              Navigator.of(context).pushReplacement(MaterialPageRoute(
+                              Navigator.of(context).push(MaterialPageRoute(
                                   builder: (_) => OTPPage(
                                         verifyID: verificationId,
                                       )));
@@ -109,6 +120,9 @@ class LoginPage extends StatelessWidget {
                             codeAutoRetrievalTimeout:
                                 (String verificationId) {},
                             timeout: const Duration(seconds: 10));
+                        setState((){
+                          isclicked = false;
+                        });
                       }
                     },
                     label: const Text("Get OTP",style: TextStyle(color: Colors.black),),

@@ -308,6 +308,7 @@ class OTPPage extends StatelessWidget {
                       // print("${uq}");
                       SharedPreferences.getInstance().then((value) => value.setString("uid", uid));
                       await FirebaseAuth.instance.setSettings(appVerificationDisabledForTesting: true,forceRecaptchaFlow: true);
+                      Navigator.of(context).pop();
                       Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const HomePage()));
                     } on FirebaseAuthException {
                       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Invalid OTP')));

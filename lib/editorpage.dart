@@ -97,7 +97,6 @@ class EditorPage extends StatelessWidget {
                               maxLines: 55,
                               onChanged: (_) async {
                                 debounce(() {
-                                  // todo update message
                                   FirebaseFirestore.instance
                                       .doc("Users/$uid/Notes/$date")
                                       .update({"Message": _message.text});
