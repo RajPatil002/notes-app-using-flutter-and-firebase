@@ -52,6 +52,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '67837084425',
     projectId: 'notesappbyraj',
     authDomain: 'notesappbyraj.firebaseapp.com',
+    databaseURL: 'https://notesappbyraj-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'notesappbyraj.appspot.com',
   );
 
@@ -60,6 +61,7 @@ class DefaultFirebaseOptions {
     appId: '1:67837084425:android:07b7a717495ab6ec0bc9d8',
     messagingSenderId: '67837084425',
     projectId: 'notesappbyraj',
+    databaseURL: 'https://notesappbyraj-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'notesappbyraj.appspot.com',
   );
 
@@ -68,7 +70,9 @@ class DefaultFirebaseOptions {
     appId: '1:67837084425:ios:b6ca487adc7a41e50bc9d8',
     messagingSenderId: '67837084425',
     projectId: 'notesappbyraj',
+    databaseURL: 'https://notesappbyraj-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'notesappbyraj.appspot.com',
+    androidClientId: '67837084425-b2ar13kfb2pa2abulvj6s6jl0ef6li3p.apps.googleusercontent.com',
     iosClientId: '67837084425-g9dvlsob6lojkpiponfq3up35n5vvb6d.apps.googleusercontent.com',
     iosBundleId: 'com.example.notesapp',
   );
