@@ -1,6 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 
-class AppState{
-  String uid;
+class AppState {
+  User? user;
 
-  AppState({this.uid = ""});
+  AppState({this.user});
 }

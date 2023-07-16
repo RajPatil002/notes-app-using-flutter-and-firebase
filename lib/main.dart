@@ -12,7 +12,7 @@ import 'loadingpage.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  final Store<AppState> store = Store(getUid, initialState: AppState(uid: ""));
+  final Store<AppState> store = Store(getUser, initialState: AppState(user: null));
   runApp(StoreProvider(
     store: store,
     child: MaterialApp(

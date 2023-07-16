@@ -1,5 +1,7 @@
-class UpdateUid{
-  String uid;
+import 'package:firebase_auth/firebase_auth.dart';
 
-  UpdateUid(this.uid);
+class UpdateUser {
+  User? user;
+
+  UpdateUser({this.user});
 }

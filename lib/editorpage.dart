@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:notesapp/redux/appstate.dart';
@@ -21,9 +22,9 @@ class EditorPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StoreConnector<AppState, String>(
-      converter: (store) => store.state.uid,
-      builder: (context, uid) => Scaffold(
+    return StoreConnector<AppState, User?>(
+      converter: (store) => store.state.user,
+      builder: (context, user) => Scaffold(
         body: Stack(
           children: [
             Container(
@@ -36,16 +37,12 @@ class EditorPage extends StatelessWidget {
               ),
             ),
             FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
-              future: FirebaseFirestore.instance
-                  .collection("Users/$uid/Notes")
-                  .doc(date)
-                  .get(),
+              future: FirebaseFirestore.instance.collection("Users/${user?.uid}/Notes").doc(date).get(),
               builder: (context, notedata) {
                 // print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa${date}aaaaaaaaaaaaaaaaaaaa${notedata.data?.data().toString()}");
                 if (notedata.connectionState != ConnectionState.waiting) {
                   if (notedata.hasData) {
-                    Map<String, dynamic> note =
-                        notedata.data?.data() as Map<String, dynamic>;
+                    Map<String, dynamic> note = notedata.data?.data() as Map<String, dynamic>;
                     _message.text = note['Message'];
                     _title.text = note['Title'];
                     return Padding(
@@ -58,18 +55,11 @@ class EditorPage extends StatelessWidget {
                                 fillColor: Colors.white,
                                 filled: true,
                                 hintText: 'Enter your Note',
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.vertical(
-                                      top: Radius.circular(20)
-                                    )
-                                )
-                            ),
+                                border: OutlineInputBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20)))),
                             onChanged: (_) async {
                               debounce(() {
                                 // todo update title
-                                FirebaseFirestore.instance
-                                    .doc("Users/$uid/Notes/$date")
-                                    .update({"Title": _title.text});
+                                FirebaseFirestore.instance.doc("Users/${user!.uid}/Notes/$date").update({"Title": _title.text});
                               });
                             },
                             style: const TextStyle(fontSize: 30),
@@ -84,12 +74,7 @@ class EditorPage extends StatelessWidget {
                                   fillColor: Colors.white,
                                   filled: true,
                                   hintText: 'Enter your Note',
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.vertical(
-                                      bottom: Radius.circular(20)
-                                    )
-                                  )
-                              ),
+                                  border: OutlineInputBorder(borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)))),
                               style: const TextStyle(fontSize: 22),
                               // autofocus: true,
                               controller: _message,
@@ -97,9 +82,7 @@ class EditorPage extends StatelessWidget {
                               maxLines: 55,
                               onChanged: (_) async {
                                 debounce(() {
-                                  FirebaseFirestore.instance
-                                      .doc("Users/$uid/Notes/$date")
-                                      .update({"Message": _message.text});
+                                  FirebaseFirestore.instance.doc("Users/${user!.uid}/Notes/$date").update({"Message": _message.text});
                                 });
                               },
                             ),
@@ -119,9 +102,7 @@ class EditorPage extends StatelessWidget {
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             _timer?.cancel();
-            FirebaseFirestore.instance
-                .doc("Users/$uid/Notes/$date")
-                .update({"Title": _title.text, "Message": _message.text});
+            FirebaseFirestore.instance.doc("Users/${user!.uid}/Notes/$date").update({"Title": _title.text, "Message": _message.text});
           },
           backgroundColor: const Color(0xff01bff9),
           child: const Icon(Icons.done),
