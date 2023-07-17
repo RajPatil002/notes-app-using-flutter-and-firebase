@@ -39,11 +39,11 @@ dependencies:
   firebase_core: ^2.14.0
   cloud_firestore: ^4.8.2
   firebase_auth: ^4.6.3
-  http: ^1.1.0
   flutter_redux: ^0.10.0
   redux: ^5.0.0
   shared_preferences: ^2.0.17
   intl: ^0.18.1
+  flutterfire: ^0.0.1
 
 dev_dependencies:
   flutter_test:

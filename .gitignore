@@ -10,8 +10,9 @@
 .svn/
 migrate_working_dir/
 /lib/firebase_options.dart
-/android
+/android/*
 /ios
+!/android/app/src/main/
 
 # IntelliJ related
 *.iml
