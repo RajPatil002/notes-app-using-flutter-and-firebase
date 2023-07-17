@@ -12,7 +12,7 @@ migrate_working_dir/
 /lib/firebase_options.dart
 /android/*
 /ios
-!/android/app/src/main/
+!/android/app/src/main/*
 
 # IntelliJ related
 *.iml
