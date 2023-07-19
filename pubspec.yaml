@@ -43,7 +43,6 @@ dependencies:
   redux: ^5.0.0
   shared_preferences: ^2.0.17
   intl: ^0.18.1
-  flutterfire: ^0.0.1
 
 dev_dependencies:
   flutter_test:
