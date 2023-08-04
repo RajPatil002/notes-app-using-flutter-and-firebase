@@ -5,7 +5,10 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:intl/intl.dart';
 import 'package:notesapp/backgroundtheme.dart';
 import 'package:notesapp/editorpage.dart';
+import 'package:notesapp/redux/actions.dart';
 import 'package:notesapp/redux/appstate.dart';
+import 'package:notesapp/utils/auth/auth.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatelessWidget {
@@ -199,7 +202,9 @@ class HomePage extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          SharedPreferences.getInstance().then((value) => value.setString("uid", ""));
+          // SharedPreferences.getInstance().then((value) => value.setString("uid", ""));
+          Provider.of<Auth>(context, listen: false).logOut();
+          StoreProvider.of<AppState>(context).dispatch(UpdateUser());
         },
         backgroundColor: const Color(0xff01bff9),
         label: const Text("Logout"),

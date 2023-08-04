@@ -4,6 +4,8 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:notesapp/homepage.dart';
 import 'package:notesapp/redux/actions.dart';
 import 'package:notesapp/redux/appstate.dart';
+import 'package:notesapp/utils/auth/auth.dart';
+import 'package:provider/provider.dart';
 
 import 'backgroundtheme.dart';
 
@@ -258,22 +260,8 @@ class OTPPage extends StatelessWidget {
                 FloatingActionButton.extended(
                   backgroundColor: Colors.white,
                   icon: const Icon(Icons.verified, color: Colors.black),
-                  onPressed: () async {
-                    try {
-                      UserCredential result = await FirebaseAuth.instance.signInWithCredential(PhoneAuthProvider.credential(
-                          verificationId: verifyID,
-                          smsCode: "${pin1.text}${pin2.text}${pin3.text}${pin4.text}${pin5.text}${pin6.text}"));
-                      // String uid = result.user!.uid;
-                      StoreProvider.of<AppState>(context).dispatch(UpdateUser(user: result.user));
-                      // print("${uq}");
-                      // SharedPreferences.getInstance().then((value) => value.setString("uid", uid));
-                      await FirebaseAuth.instance.setSettings(appVerificationDisabledForTesting: true, forceRecaptchaFlow: true);
-                      // Navigator.of(context).pop();
-                      // Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const HomePage()));
-                    } on FirebaseAuthException {
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Invalid OTP')));
-                    }
-                  },
+                  onPressed: () => Provider.of<Auth>(context, listen: false)
+                      .verifyOTP(verifyID, "${pin1.text}${pin2.text}${pin3.text}${pin4.text}${pin5.text}${pin6.text}", context),
                   label: const Text(
                     "Verify",
                     style: TextStyle(color: Colors.black),
