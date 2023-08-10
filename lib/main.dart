@@ -14,17 +14,13 @@ import 'loadingpage.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  final Store<AppState> store = Store(getUser, initialState: AppState(user: null));
+  final Store<AppState> store = Store(updateState, initialState: AppState(user: FirebaseAuth.instance.currentUser));
   runApp(StoreProvider(
     store: store,
-    child: ChangeNotifierProvider(
-      create: (BuildContext context) => Auth(),
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(fontFamily: "Patrick"),
-        home: ChangeNotifierProvider(create: (BuildContext context) => Auth(),
-        child: const LoadingPage()),
-      ),
+    child: MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(fontFamily: "Patrick"),
+      home: const LoadingPage(),
     ),
   ));
 }

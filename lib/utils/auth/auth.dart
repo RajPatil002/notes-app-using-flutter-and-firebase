@@ -4,52 +4,29 @@ import 'package:flutter_redux/flutter_redux.dart';
 
 import '../../redux/actions.dart';
 import '../../redux/appstate.dart';
+import '../data.dart';
 
-class Auth extends ChangeNotifier {
+class Auth {
   User? user;
   final fireauth = FirebaseAuth.instance;
-  Auth() {
-    user = fireauth.currentUser;
+  Auth({this.user}) {
+    // user = fireauth.currentUser;
     fireauth.authStateChanges().listen((result) {
-      print(result);
+      // print(result);
       user = result;
     });
   }
 
-  User? isLogged() => user;
-
-  String? verID;
-  Future<String?> requestOTP(phone) async {
-    await fireauth
-        .verifyPhoneNumber(
-            phoneNumber: phone,
-            verificationFailed: (FirebaseAuthException error) {
-              print(error);
-              // ScaffoldMessenger.of(context)
-              //     .showSnackBar(SnackBar(content: Text("Incorrect number.${error.message.toString()}")));
-            },
-            verificationCompleted: (PhoneAuthCredential phoneAuthCredential) {
-              print('ok verify');
-            },
-            codeSent: (String verificationId, int? forceResendingToken) {
-              // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("OTP sent.")));
-              verID = verificationId;
-            },
-            codeAutoRetrievalTimeout: (String verificationId) {},
-            timeout: const Duration(seconds: 10))
-        .onError((error, stackTrace) => error);
-    return verID;
-  }
-
-  verifyOTP(verifyID, otp, context) async {
+  verifyOTP({required String verifyID, required String otp, required BuildContext context}) {
+    print(verifyID);
     try {
-      UserCredential result =
-          await FirebaseAuth.instance.signInWithCredential(PhoneAuthProvider.credential(verificationId: verifyID, smsCode: otp));
+      FirebaseAuth.instance.signInWithCredential(PhoneAuthProvider.credential(verificationId: verifyID, smsCode: otp)).then((result) {
+        // print("sssssssss ${result.user}");
+        user = result.user;
+        Data().addUserIfNotExist(user: user);
+        StoreProvider.of<AppState>(context).dispatch(UpdateUser(user: result.user));
+      });
       // String uid = result.user!.uid;
-      print("sssssssss ${result.user}");
-      user = result.user;
-      StoreProvider.of<AppState>(context).dispatch(UpdateUser(user: result.user));
-      notifyListeners();
       // print("${uq}");
       // SharedPreferences.getInstance().then((value) => value.setString("uid", uid));
       // await FirebaseAuth.instance.setSettings(
@@ -63,11 +40,9 @@ class Auth extends ChangeNotifier {
     }
   }
 
-  void logOut() {
-    user = null;
+  Future<User?> logOut() async {
     // user = null;
-    fireauth.signOut();
-
-    notifyListeners();
+    await fireauth.signOut();
+    return fireauth.currentUser;
   }
 }

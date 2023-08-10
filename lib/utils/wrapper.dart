@@ -14,16 +14,16 @@ class Wrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // final auth = Provider.of<Auth>(context);
+    // print(state.user);
     return StoreConnector<AppState, AppState>(
         builder: (context, state) {
-          final auth = Provider.of<Auth>(context);
-          print(state.user);
-          final user = auth.isLogged();
-          if (user != null) {
-            StoreProvider.of<AppState>(context).dispatch(UpdateUser(user: user));
+          // final user = state.auth.isLogged();
+          if (state.user != null) {
+            // StoreProvider.of<AppState>(context).dispatch(UpdateUser(user: user));
             return const HomePage();
           } else {
-            return LoginPage();
+            return const LoginPage();
           }
         },
         converter: (store) => store.state);

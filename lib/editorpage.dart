@@ -102,7 +102,8 @@ class EditorPage extends StatelessWidget {
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             _timer?.cancel();
-            FirebaseFirestore.instance.doc("Users/${user!.uid}/Notes/$date").update({"Title": _title.text, "Message": _message.text});
+            // todo update note
+            // FirebaseFirestore.instance.collection("Users/${user!.uid}/Notes").update({"Title": _title.text, "Message": _message.text,"date":date});
           },
           backgroundColor: const Color(0xff01bff9),
           child: const Icon(Icons.done),

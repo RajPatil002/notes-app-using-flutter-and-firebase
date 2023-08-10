@@ -9,207 +9,217 @@ import 'package:notesapp/redux/actions.dart';
 import 'package:notesapp/redux/appstate.dart';
 import 'package:notesapp/utils/auth/auth.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:redux/redux.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Stack(
-          children: [
-            Container(
-              // todo back ground
-              height: MediaQuery.of(context).size.height,
-              width: MediaQuery.of(context).size.width,
-              color: const Color(0xffff5858),
-              child: CustomPaint(
-                painter: BackgroundTheme(),
-              ),
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+    return StoreConnector<AppState, AppState>(
+      builder: (context, state) {
+        return Scaffold(
+          body: SafeArea(
+            child: Stack(
               children: [
-                const Padding(
-                  padding: EdgeInsets.only(left: 30, top: 20, bottom: 20),
-                  child: Text(
-                    "Welcome to Notes",
-                    style: TextStyle(fontSize: 35, color: Colors.white, fontWeight: FontWeight.bold, letterSpacing: 2),
+                Container(
+                  // todo back ground
+                  height: MediaQuery.of(context).size.height,
+                  width: MediaQuery.of(context).size.width,
+                  color: const Color(0xffff5858),
+                  child: CustomPaint(
+                    painter: BackgroundTheme(),
                   ),
                 ),
-                Expanded(
-                  child: StoreConnector<AppState, User?>(
-                    converter: (store) => store.state.user,
-                    builder: (context, user) => StreamBuilder(
-                      stream: FirebaseFirestore.instance.collection('Users/${user!.uid}/Notes').snapshots(),
-                      builder: (context, AsyncSnapshot<QuerySnapshot> notes) {
-                        // print(notes.data?.docs[0].id +"");
-                        if (notes.hasData) {
-                          return Padding(
-                            padding: const EdgeInsets.all(10),
-                            child: GridView.builder(
-                              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2,
-                              ),
-                              itemCount: notes.data?.docs.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                DateTime date = DateTime.parse("${notes.data?.docs[index].id.toString()}");
-                                return Padding(
-                                  // padding: const EdgeInsets.only(left: 15,right: 15,),
-                                  padding: const EdgeInsets.all(10),
-                                  child: InkWell(
-                                    onTap: () {
-                                      // todo
-                                      // print(notes.data!.docs[index].id.length);
-                                      Navigator.of(context).push(
-                                          MaterialPageRoute(builder: (_) => EditorPage(date: notes.data!.docs[index].id.toString())));
-                                    },
-                                    child: Card(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(15),
-                                      ),
-                                      elevation: 20,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(10.0),
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                                          children: [
-                                            Row(
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(left: 30, top: 20, bottom: 20),
+                      child: Text(
+                        "Welcome to Notes",
+                        style: TextStyle(fontSize: 35, color: Colors.white, fontWeight: FontWeight.bold, letterSpacing: 2),
+                      ),
+                    ),
+                    Expanded(
+                      child: StoreConnector<AppState, User?>(
+                        converter: (store) => store.state.user,
+                        builder: (context, user) => StreamBuilder(
+                          stream: FirebaseFirestore.instance.collection('Users/${user!.uid}/Notes').snapshots(),
+                          builder: (context, AsyncSnapshot<QuerySnapshot> notes) {
+                            // print(notes.data?.docs[0].id +"");
+                            if (notes.hasData && notes.data?.size != 0) {
+                              return Padding(
+                                padding: const EdgeInsets.all(10),
+                                child: GridView.builder(
+                                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2,
+                                  ),
+                                  itemCount: notes.data?.docs.length,
+                                  itemBuilder: (BuildContext context, int index) {
+                                    DateTime date = DateTime.parse("${notes.data?.docs[index].id.toString()}");
+                                    return Padding(
+                                      // padding: const EdgeInsets.only(left: 15,right: 15,),
+                                      padding: const EdgeInsets.all(10),
+                                      child: InkWell(
+                                        onTap: () {
+                                          // todo
+                                          // print(notes.data!.docs[index].id.length);
+                                          Navigator.of(context).push(MaterialPageRoute(
+                                              builder: (_) => EditorPage(date: notes.data!.docs[index].id.toString())));
+                                        },
+                                        child: Card(
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(15),
+                                          ),
+                                          elevation: 20,
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(10.0),
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.stretch,
                                               children: [
+                                                Row(
+                                                  children: [
+                                                    Expanded(
+                                                      flex: 3,
+                                                      child: Text(
+                                                        notes.data?.docs[index]["Title"],
+                                                        style: const TextStyle(fontSize: 23),
+                                                        overflow: TextOverflow.ellipsis,
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      flex: 1,
+                                                      child: CircleAvatar(
+                                                        backgroundColor: const Color(0xffff5858),
+                                                        child: IconButton(
+                                                          color: Colors.white,
+                                                          onPressed: () {
+                                                            //  todo
+                                                            showDialog(
+                                                                context: context,
+                                                                builder: (BuildContext context) {
+                                                                  return AlertDialog(
+                                                                    shape: RoundedRectangleBorder(
+                                                                        borderRadius: BorderRadius.circular(30)),
+                                                                    alignment: Alignment.center,
+                                                                    title: const Text("Delete"),
+                                                                    content: Padding(
+                                                                      padding: const EdgeInsets.all(8.0),
+                                                                      child: Column(
+                                                                        mainAxisSize: MainAxisSize.min,
+                                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                                        children: [
+                                                                          const Text("Do you want to delete this note?"),
+                                                                          Text(notes.data?.docs[index]["Title"])
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                    actions: [
+                                                                      ElevatedButton(
+                                                                          style: ButtonStyle(
+                                                                              backgroundColor:
+                                                                                  MaterialStateProperty.all(Colors.deepPurpleAccent),
+                                                                              shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                                                                                  borderRadius: BorderRadius.circular(50)))),
+                                                                          onPressed: () {
+                                                                            FirebaseFirestore.instance
+                                                                                .doc(
+                                                                                    "Users/${user.uid}/Notes/${notes.data?.docs[index].id}")
+                                                                                .delete();
+                                                                            Navigator.of(context).pop();
+                                                                          },
+                                                                          child: const Text("Yes"))
+                                                                    ],
+                                                                  );
+                                                                });
+                                                          },
+                                                          // elevation: 20,
+                                                          icon: const Icon(Icons.delete_forever),
+                                                        ),
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
+                                                // const SizedBox(height: 20,),
                                                 Expanded(
                                                   flex: 3,
-                                                  child: Text(
-                                                    notes.data?.docs[index]["Title"],
-                                                    style: const TextStyle(fontSize: 23),
-                                                    overflow: TextOverflow.ellipsis,
-                                                  ),
+                                                  child: Text(notes.data?.docs[index]["Message"]),
                                                 ),
-                                                Expanded(
-                                                  flex: 1,
-                                                  child: CircleAvatar(
-                                                    backgroundColor: const Color(0xffff5858),
-                                                    child: IconButton(
-                                                      color: Colors.white,
-                                                      onPressed: () {
-                                                        //  todo
-                                                        showDialog(
-                                                            context: context,
-                                                            builder: (BuildContext context) {
-                                                              return AlertDialog(
-                                                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                                                                alignment: Alignment.center,
-                                                                title: const Text("Delete"),
-                                                                content: Padding(
-                                                                  padding: const EdgeInsets.all(8.0),
-                                                                  child: Column(
-                                                                    mainAxisSize: MainAxisSize.min,
-                                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                                    children: [
-                                                                      const Text("Do you want to delete this note?"),
-                                                                      Text(notes.data?.docs[index]["Title"])
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                                actions: [
-                                                                  ElevatedButton(
-                                                                      style: ButtonStyle(
-                                                                          backgroundColor:
-                                                                              MaterialStateProperty.all(Colors.deepPurpleAccent),
-                                                                          shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                                                                              borderRadius: BorderRadius.circular(50)))),
-                                                                      onPressed: () {
-                                                                        FirebaseFirestore.instance
-                                                                            .doc(
-                                                                                "Users/${user.uid}/Notes/${notes.data?.docs[index].id}")
-                                                                            .delete();
-                                                                        Navigator.of(context).pop();
-                                                                      },
-                                                                      child: const Text("Yes"))
-                                                                ],
-                                                              );
-                                                            });
-                                                      },
-                                                      // elevation: 20,
-                                                      icon: const Icon(Icons.delete_forever),
-                                                    ),
-                                                  ),
-                                                )
-                                              ],
-                                            ),
-                                            // const SizedBox(height: 20,),
-                                            Expanded(
-                                              flex: 3,
-                                              child: Text(notes.data?.docs[index]["Message"]),
-                                            ),
-                                            Row(
-                                              children: [
-                                                Expanded(
-                                                  flex: 4,
-                                                  child: Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: [
-                                                      Text(
-                                                        DateFormat("MMM dd yyyy").format(date),
-                                                        style: const TextStyle(fontSize: 15),
+                                                Row(
+                                                  children: [
+                                                    Expanded(
+                                                      flex: 4,
+                                                      child: Column(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        children: [
+                                                          Text(
+                                                            DateFormat("MMM dd yyyy").format(date),
+                                                            style: const TextStyle(fontSize: 15),
+                                                          ),
+                                                          Text(
+                                                            DateFormat("HH:mm").format(date),
+                                                            style: const TextStyle(fontSize: 10),
+                                                          )
+                                                        ],
                                                       ),
-                                                      Text(
-                                                        DateFormat("HH:mm").format(date),
-                                                        style: const TextStyle(fontSize: 10),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  flex: 2,
-                                                  child: CircleAvatar(
-                                                    backgroundColor: const Color(0xff01bff9),
-                                                    radius: 25,
-                                                    child: IconButton(
-                                                      onPressed: () {
-                                                        // TODO
-                                                      },
-                                                      color: Colors.white,
-                                                      icon: const Icon(Icons.edit),
                                                     ),
-                                                  ),
+                                                    Expanded(
+                                                      flex: 2,
+                                                      child: CircleAvatar(
+                                                        backgroundColor: const Color(0xff01bff9),
+                                                        radius: 25,
+                                                        child: IconButton(
+                                                          onPressed: () {
+                                                            // TODO
+                                                          },
+                                                          color: Colors.white,
+                                                          icon: const Icon(Icons.edit),
+                                                        ),
+                                                      ),
+                                                    )
+                                                  ],
                                                 )
                                               ],
-                                            )
-                                          ],
+                                            ),
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                          );
-                        } else {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
-                      },
+                                    );
+                                  },
+                                ),
+                              );
+                            } else {
+                              return const Padding(
+                                padding: EdgeInsets.all(20.0),
+                                child: Text(
+                                  "Add Notes",
+                                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),
+                                ),
+                              );
+                            }
+                          },
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
               ],
             ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          // SharedPreferences.getInstance().then((value) => value.setString("uid", ""));
-          Provider.of<Auth>(context, listen: false).logOut();
-          StoreProvider.of<AppState>(context).dispatch(UpdateUser());
-        },
-        backgroundColor: const Color(0xff01bff9),
-        label: const Text("Logout"),
-        icon: const Icon(Icons.logout),
-      ),
+          ),
+          floatingActionButton: FloatingActionButton.extended(
+            onPressed: () {
+              // SharedPreferences.getInstance().then((value) => value.setString("uid", ""));
+              state.auth.logOut();
+              StoreProvider.of<AppState>(context).dispatch(UpdateUser());
+            },
+            backgroundColor: const Color(0xff01bff9),
+            label: const Text("Logout"),
+            icon: const Icon(Icons.logout),
+          ),
+        );
+      },
+      converter: (store) => store.state,
     );
   }
 }
