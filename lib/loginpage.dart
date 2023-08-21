@@ -5,8 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:notesapp/redux/appstate.dart';
-import 'package:notesapp/utils/auth/auth.dart';
-import 'package:provider/provider.dart';
 
 import 'backgroundtheme.dart';
 
@@ -18,7 +16,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  TextEditingController phone = TextEditingController(text: "+918806643372");
+  TextEditingController phone = TextEditingController();
 
   Color valid = const Color(0xFF7C4DFF);
 

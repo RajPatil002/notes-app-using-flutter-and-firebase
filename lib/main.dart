@@ -5,8 +5,6 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:notesapp/firebase_options.dart';
 import 'package:notesapp/redux/appstate.dart';
 import 'package:notesapp/redux/reducer.dart';
-import 'package:notesapp/utils/auth/auth.dart';
-import 'package:provider/provider.dart';
 import 'package:redux/redux.dart';
 
 import 'loadingpage.dart';
@@ -17,10 +15,12 @@ void main() async {
   final Store<AppState> store = Store(updateState, initialState: AppState(user: FirebaseAuth.instance.currentUser));
   runApp(StoreProvider(
     store: store,
-    child: MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(fontFamily: "Patrick"),
-      home: const LoadingPage(),
+    child: SafeArea(
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(fontFamily: "Patrick"),
+        home: const LoadingPage(),
+      ),
     ),
   ));
 }

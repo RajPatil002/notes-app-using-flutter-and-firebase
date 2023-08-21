@@ -4,7 +4,7 @@ import 'package:flutter_redux/flutter_redux.dart';
 
 import '../../redux/actions.dart';
 import '../../redux/appstate.dart';
-import '../data.dart';
+import '../firestore/datastore.dart';
 
 class Auth {
   User? user;
@@ -12,7 +12,7 @@ class Auth {
   Auth({this.user}) {
     // user = fireauth.currentUser;
     fireauth.authStateChanges().listen((result) {
-      // print(result);
+      // print("asdasdasdasda" + result.toString());
       user = result;
     });
   }
@@ -21,9 +21,8 @@ class Auth {
     print(verifyID);
     try {
       FirebaseAuth.instance.signInWithCredential(PhoneAuthProvider.credential(verificationId: verifyID, smsCode: otp)).then((result) {
-        // print("sssssssss ${result.user}");
         user = result.user;
-        Data().addUserIfNotExist(user: user);
+        Datastore().addUserIfNotExist(user: user);
         StoreProvider.of<AppState>(context).dispatch(UpdateUser(user: result.user));
       });
       // String uid = result.user!.uid;

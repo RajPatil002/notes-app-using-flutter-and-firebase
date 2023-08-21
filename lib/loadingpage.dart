@@ -22,7 +22,7 @@ class _LoadingPageState extends State<LoadingPage> {
 
   @override
   Widget build(BuildContext context) {
-    final screensize = MediaQuery.of(context).size;
+    // final screensize = MediaQuery.of(context).size;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Center(
@@ -33,28 +33,32 @@ class _LoadingPageState extends State<LoadingPage> {
             ),
             Column(
               children: [
-                Container(
-                  alignment: Alignment.bottomCenter,
-                  height: screensize.height * 0.5,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 10, bottom: 20),
-                    child: Image.asset(
-                      'assets/mobicon.png',
-                      alignment: Alignment.bottomCenter,
+                Expanded(
+                  child: Container(
+                    alignment: Alignment.bottomCenter,
+                    // height: screensize.height * 0.5,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 10, bottom: 20),
+                      child: Image.asset(
+                        'assets/mobicon.png',
+                        alignment: Alignment.bottomCenter,
+                      ),
                     ),
                   ),
                 ),
-                SizedBox(
+                Expanded(
                   child: Stack(
                     alignment: Alignment.topCenter,
                     children: [
-                      SizedBox(
-                        height: screensize.height * 0.5,
-                        width: screensize.width,
-                        child: CustomPaint(
-                          painter: BlueCurve(),
-                        ),
-                      ),
+                      LayoutBuilder(builder: (context, box) {
+                        return SizedBox(
+                          height: box.maxHeight,
+                          width: box.maxWidth,
+                          child: CustomPaint(
+                            painter: BlueCurve(),
+                          ),
+                        );
+                      }),
                       const Padding(
                         padding: EdgeInsets.only(top: 10),
                         child: Text(
@@ -64,7 +68,7 @@ class _LoadingPageState extends State<LoadingPage> {
                       )
                     ],
                   ),
-                )
+                ),
               ],
             ),
             // Text("data"),
