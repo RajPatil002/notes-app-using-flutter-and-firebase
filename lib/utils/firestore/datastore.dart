@@ -36,8 +36,8 @@ class Datastore {
         .toList());
   }
 
-  Future<Map<String, dynamic>?> fetchNote({required String noteid}) {
-    return storeinstance.doc("Users/$uid/Notes/$noteid").get().then((documents) => documents.data());
+  Future<Map<String, dynamic>> fetchNote({required String noteid}) {
+    return storeinstance.doc("Users/$uid/Notes/$noteid").get().then((documents) => documents.data()!);
   }
 
   void updateNoteTitle({required String title, required String noteid}) {
@@ -49,6 +49,13 @@ class Datastore {
   void updateNoteMessage({required String message, required String noteid}) {
     storeinstance.doc("Users/$uid/Notes/$noteid").update({
       Database.message: message,
+    });
+  }
+
+  Future<void> updateNote({required String message, required String title, required String noteid}) async {
+    await storeinstance.doc("Users/$uid/Notes/$noteid").update({
+      Database.message: message,
+      Database.title: title,
     });
   }
 

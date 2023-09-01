@@ -10,6 +10,7 @@ class BackgroundTheme extends CustomPainter {
     Paint red = Paint()
       ..color = const Color(0xffff5858)
       ..style = PaintingStyle.fill;
+    canvas.drawPaint(red);
 
     final radius = (Offset(size.width * 0.5, size.height * 0.1) - Offset(size.width * 0.5, size.height * 0.5)).distance * 0.5;
     Path path = Path();

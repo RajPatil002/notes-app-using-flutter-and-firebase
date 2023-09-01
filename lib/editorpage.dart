@@ -1,6 +1,4 @@
 import 'dart:async';
-
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:notesapp/redux/appstate.dart';
@@ -23,127 +21,134 @@ class EditorPage extends StatefulWidget {
 }
 
 class _EditorPageState extends State<EditorPage> {
-  Timer? _timer;
+  Timer? _titletimer, _messagetimer;
 
   final TextEditingController _message = TextEditingController();
 
   final TextEditingController _title = TextEditingController();
-
-  late Datastore data;
+  Map<String, dynamic>? note;
+  late Datastore datastore;
   @override
   void initState() {
+    final uid = StoreProvider.of<AppState>(context, listen: false).state.user!.uid;
+    datastore = Datastore(uid: uid);
+    datastore.fetchNote(noteid: widget.id).then((note) {
+      setState(() {
+        this.note = note;
+        _message.text = note[Database.message];
+        _title.text = note[Database.title];
+        _message.selection = TextSelection.fromPosition(TextPosition(offset: _message.text.length));
+        _title.selection = TextSelection.fromPosition(TextPosition(offset: _title.text.length));
+      });
+    });
     super.initState();
   }
 
   @override
+  void dispose() {
+    datastore.updateNote(message: _message.text, title: _title.text, noteid: widget.id).then((_) {
+      _message.dispose();
+      _title.dispose();
+      _titletimer?.cancel();
+      _messagetimer?.cancel();
+    });
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return StoreConnector<AppState, User?>(
-      converter: (store) => store.state.user,
-      builder: (context, user) {
-        data = Datastore(uid: user!.uid);
-        return SafeArea(
-          child: Scaffold(
-            resizeToAvoidBottomInset: false,
-            body: Stack(
-              children: [
-                Container(
-                  // todo back ground
-                  height: MediaQuery.of(context).size.height,
-                  width: MediaQuery.of(context).size.width,
-                  color: const Color(0xffff5858),
-                  child: CustomPaint(
-                    painter: BackgroundTheme(),
-                  ),
-                ),
-                FutureBuilder<Map<String, dynamic>?>(
-                  future: data.fetchNote(noteid: widget.id),
-                  builder: (context, notedata) {
-                    if (notedata.hasData && notedata.data != null) {
-                      Map<String, dynamic> note = notedata.data!;
-                      _message.text = note[Database.message];
-                      _title.text = note[Database.title];
-                      _message.selection = TextSelection.fromPosition(TextPosition(offset: _message.text.length));
-                      _title.selection = TextSelection.fromPosition(TextPosition(offset: _title.text.length));
-                      return Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: Column(
-                          children: [
-                            TextField(
-                              controller: _title,
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      body: Container(
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
+        color: const Color(0xffff5858),
+        child: CustomPaint(
+            painter: BackgroundTheme(),
+            child: (note != null)
+                ? Scaffold(
+                    backgroundColor: Colors.transparent,
+                    body: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Column(
+                        children: [
+                          TextField(
+                            onTap: () => _title.text == 'Untitled'
+                                ? _title.selection = TextSelection(baseOffset: 0, extentOffset: _title.text.length)
+                                : null,
+                            controller: _title,
+                            decoration: const InputDecoration(
+                                fillColor: Colors.white,
+                                filled: true,
+                                focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide.none, borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+                                hintText: 'Enter your Note',
+                                border: OutlineInputBorder(
+                                    borderSide: BorderSide.none, borderRadius: BorderRadius.vertical(top: Radius.circular(20)))),
+                            onChanged: (_) async {
+                              debounceTitle(() {
+                                datastore.updateNoteTitle(title: _title.text, noteid: widget.id);
+                              });
+                            },
+                            style: const TextStyle(fontSize: 35, fontWeight: FontWeight.bold),
+                            maxLines: 1,
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          Expanded(
+                            child: TextField(
                               decoration: const InputDecoration(
                                   fillColor: Colors.white,
+                                  focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide.none, borderRadius: BorderRadius.vertical(bottom: Radius.circular(20))),
                                   filled: true,
                                   hintText: 'Enter your Note',
-                                  border: OutlineInputBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20)))),
+                                  border: OutlineInputBorder(
+                                      borderSide: BorderSide.none, borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)))),
+                              style: const TextStyle(fontSize: 30),
+                              // autofocus: true,
+                              controller: _message,
+                              keyboardType: TextInputType.multiline,
+                              maxLines: 55,
                               onChanged: (_) async {
-                                debounce(() {
-                                  // todo update title
-                                  // FirebaseFirestore.instance.doc("Users/${user!.uid}/Notes/$id").update({Database.title: _title.text});
-                                  data.updateNoteTitle(title: _title.text, noteid: widget.id);
+                                debounceMessage(() {
+                                  datastore.updateNoteMessage(message: _message.text, noteid: widget.id);
                                 });
                               },
-                              style: const TextStyle(fontSize: 30),
-                              maxLines: 1,
                             ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Expanded(
-                              child: TextField(
-                                decoration: const InputDecoration(
-                                    fillColor: Colors.white,
-                                    filled: true,
-                                    hintText: 'Enter your Note',
-                                    border: OutlineInputBorder(borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)))),
-                                style: const TextStyle(fontSize: 22),
-                                // autofocus: true,
-                                controller: _message,
-                                keyboardType: TextInputType.multiline,
-                                maxLines: 55,
-                                onChanged: (_) async {
-                                  debounce(() {
-                                    // todo update message
-                                    // FirebaseFirestore.instance
-                                    //     .doc("Users/${user.uid}/Notes/$id")
-                                    //     .update({Database.message: _message.text});
-                                    data.updateNoteMessage(message: _message.text, noteid: widget.id);
-                                  });
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    } else {
-                      return const Center(
-                        child: CircularProgressIndicator(
-                          color: Colors.white,
-                        ),
-                      );
-                    }
-                  },
-                ),
-              ],
-            ),
-            floatingActionButton: FloatingActionButton(
-              onPressed: () {
-                _timer?.cancel();
-                // todo update note
-                // FirebaseFirestore.instance.collection("Users/${user!.uid}/Notes").update({Database.title: _title.text, Database.message: _message.text,"date":date});
-              },
-              backgroundColor: const Color(0xff01bff9),
-              child: const Icon(Icons.done),
-            ),
-          ),
-        );
-      },
+                          ),
+                        ],
+                      ),
+                    ),
+                    floatingActionButton: FloatingActionButton(
+                      onPressed: () {
+                        _titletimer?.cancel();
+                        _messagetimer?.cancel();
+                        datastore
+                            .updateNote(message: _message.text, title: _title.text, noteid: widget.id)
+                            .then((value) => Navigator.pop(context));
+                      },
+                      backgroundColor: const Color(0xff01bff9),
+                      child: const Icon(Icons.done),
+                    ),
+                  )
+                : const Center(
+                    child: CircularProgressIndicator(
+                      color: Colors.white,
+                    ),
+                  )),
+      ),
     );
   }
 
-  debounce(callback) async {
-    _timer?.cancel();
-    _timer = Timer(const Duration(seconds: 5), () {
-      callback();
-    });
+  debounceTitle(void Function() callback) async {
+    _titletimer?.cancel();
+    _titletimer = Timer(const Duration(seconds: 5), callback);
+  }
+
+  debounceMessage(void Function() callback) async {
+    _messagetimer?.cancel();
+    _messagetimer = Timer(const Duration(seconds: 5), callback);
   }
 }

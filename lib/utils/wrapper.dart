@@ -13,7 +13,6 @@ class Wrapper extends StatelessWidget {
     return StoreConnector<AppState, AppState>(
         builder: (context, state) {
           if (state.user != null) {
-            print("wrapper");
             return const HomePage();
           } else {
             return const LoginPage();

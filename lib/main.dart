@@ -3,11 +3,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:notesapp/firebase_options.dart';
+import 'package:notesapp/loadingpage.dart';
 import 'package:notesapp/redux/appstate.dart';
 import 'package:notesapp/redux/reducer.dart';
 import 'package:redux/redux.dart';
-
-import 'loadingpage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
