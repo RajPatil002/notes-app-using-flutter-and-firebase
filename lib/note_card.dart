@@ -16,7 +16,6 @@ class NoteCard extends StatefulWidget {
 }
 
 class _NoteCardState extends State<NoteCard> with SingleTickerProviderStateMixin {
-  // Animation<double  > animation;
   late AnimationController _animationController;
   late DateTime date;
 
@@ -31,7 +30,6 @@ class _NoteCardState extends State<NoteCard> with SingleTickerProviderStateMixin
   @override
   Widget build(BuildContext context) {
     return Padding(
-      // padding: const EdgeInsets.only(left: 15,right: 15,),
       padding: const EdgeInsets.all(10),
       child: InkWell(
         onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => ViewPage(id: widget.id))),
@@ -49,7 +47,6 @@ class _NoteCardState extends State<NoteCard> with SingleTickerProviderStateMixin
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Row(
-                    // mainAxisSize: MainAxisSize.min,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Container(
@@ -68,9 +65,12 @@ class _NoteCardState extends State<NoteCard> with SingleTickerProviderStateMixin
                         child: IconButton(
                           color: Colors.white,
                           onPressed: () async {
-                            widget.datastore.deleteNote(noteid: widget.id);
+                            getConfirmation().then((value) {
+                              if (value == true) {
+                                widget.datastore.deleteNote(noteid: widget.id);
+                              }
+                            });
                           },
-                          // elevation: 20,
                           icon: const Icon(Icons.delete_forever),
                         ),
                       )
@@ -79,7 +79,6 @@ class _NoteCardState extends State<NoteCard> with SingleTickerProviderStateMixin
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.01,
                   ),
-                  // const SizedBox(height: 20,),
                   Text(
                     widget.data[Database.message],
                     maxLines: 10,
@@ -88,7 +87,6 @@ class _NoteCardState extends State<NoteCard> with SingleTickerProviderStateMixin
                     height: MediaQuery.of(context).size.height * 0.05,
                   ),
                   Row(
-                    // mainAxisSize: MainAxisSize.min,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Column(
@@ -123,4 +121,43 @@ class _NoteCardState extends State<NoteCard> with SingleTickerProviderStateMixin
       ),
     );
   }
+
+  Future<bool?> getConfirmation() => showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+          alignment: Alignment.center,
+          title: const Text("Delete"),
+          content: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text("Do you want to delete this note?"),
+                Text(
+                  widget.data[Database.title],
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                )
+              ],
+            ),
+          ),
+          actions: [
+            ElevatedButton(
+                style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(Colors.deepPurpleAccent),
+                    shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)))),
+                onPressed: () => Navigator.of(context).pop(true),
+                child: const Text("Yes")),
+            ElevatedButton(
+                style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(Colors.deepPurpleAccent),
+                    shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)))),
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text("No")),
+          ],
+        );
+      });
 }

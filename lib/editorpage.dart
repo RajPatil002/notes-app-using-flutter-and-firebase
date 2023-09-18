@@ -5,11 +5,7 @@ import 'package:notesapp/redux/appstate.dart';
 import 'package:notesapp/utils/firestore/datastore.dart';
 import 'package:notesapp/utils/firestore/database_structure.dart';
 
-import 'backgroundtheme.dart';
-
-// main() => runApp(
-//   MaterialApp(home: EditorPage())
-// );
+import 'package:notesapp/backgroundtheme.dart';
 
 class EditorPage extends StatefulWidget {
   final String id;

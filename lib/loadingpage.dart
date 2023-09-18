@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:notesapp/utils/firestore/datastore.dart';
 import 'package:notesapp/utils/wrapper.dart';
 
 class LoadingPage extends StatefulWidget {
@@ -8,10 +10,12 @@ class LoadingPage extends StatefulWidget {
   State<LoadingPage> createState() => _LoadingPageState();
 }
 
-class _LoadingPageState extends State<LoadingPage> {
+class _LoadingPageState extends State<LoadingPage> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
   @override
   void initState() {
     super.initState();
+    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 1500))..repeat(reverse: true);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Future.delayed(
         const Duration(seconds: 3),
@@ -21,8 +25,13 @@ class _LoadingPageState extends State<LoadingPage> {
   }
 
   @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // final screensize = MediaQuery.of(context).size;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Center(
@@ -37,11 +46,18 @@ class _LoadingPageState extends State<LoadingPage> {
                   child: Container(
                     alignment: Alignment.bottomCenter,
                     // height: screensize.height * 0.5,
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 10, bottom: 20),
-                      child: Image.asset(
-                        'assets/mobicon.png',
-                        alignment: Alignment.bottomCenter,
+                    padding: const EdgeInsets.only(bottom: 20),
+                    child: ScaleTransition(
+                      scale: Tween<double>(begin: 0.5, end: 1).animate(_controller),
+                      child: Material(
+                        color: Colors.transparent,
+                        elevation: 10,
+                        child: Image.asset(
+                          'assets/mobile.png',
+                          // width: 100,
+                          height: 150,
+                          alignment: Alignment.bottomCenter,
+                        ),
                       ),
                     ),
                   ),

@@ -86,7 +86,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                     child: StreamBuilder(
                       stream: data.fetchStreamNotes(),
                       builder: (context, AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> notessnapshot) {
-                        print('notes[0].id +""');
+                        // print('notes[0].id +${notessnapshot.data!.docs}');
                         if (notessnapshot.connectionState == ConnectionState.waiting) {
                           return const Center(
                             child: CircleAvatar(
@@ -152,37 +152,4 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       converter: (store) => store.state,
     );
   }
-
-  getConfirmation({required String title}) => showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-          alignment: Alignment.center,
-          title: const Text("Delete"),
-          content: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [const Text("Do you want to delete this note?"), Text(title)],
-            ),
-          ),
-          actions: [
-            ElevatedButton(
-                style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(Colors.deepPurpleAccent),
-                    shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)))),
-                onPressed: () => Navigator.of(context).pop(true),
-                child: const Text("Yes")),
-            ElevatedButton(
-                style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(Colors.deepPurpleAccent),
-                    shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)))),
-                onPressed: () => Navigator.of(context).pop(false),
-                child: const Text("No")),
-          ],
-        );
-      });
 }

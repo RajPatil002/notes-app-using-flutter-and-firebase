@@ -8,7 +8,8 @@ class Datastore {
 
   Datastore({this.uid});
 
-  Map<String, dynamic> _getMap({title = "Untitled", message = ""}) => {Database.title: title, Database.message: message};
+  Map<String, dynamic> _getMap({title = "Untitled", message = ""}) =>
+      {Database.title: title, Database.message: message, Database.date: DateTime.now()};
 
   addUserIfNotExist({required User? user}) {
     final DocumentReference userdoc = storeinstance.doc("/Users/${user!.uid}");
