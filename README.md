@@ -1,4 +1,4 @@
-# NotesApp - Notes App using Flutter And Firebase
+# NotesApp - Notes App using Flutter And Firebase &nbsp;&nbsp;<code><img width="50" src="https://user-images.githubusercontent.com/25181517/186150365-da1eccce-6201-487c-8649-45e9e99435fd.png" alt="Flutter" title="Flutter"/></code>&nbsp;&nbsp;<code><img width="50" src="https://user-images.githubusercontent.com/25181517/189716855-2c69ca7a-5149-4647-936d-780610911353.png" alt="Firebase" title="Firebase"/></code>
 NotesApp is a mobile application built using Flutter and Firebase, allowing users to create, view, update, and delete notes in a simple and efficient manner.
 
 ## Features
